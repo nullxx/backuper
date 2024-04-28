@@ -36,7 +36,14 @@
                     resolve(true);
                 }
                 
+                yesButton.classList.add('font-bold', 'text-xl');
                 yesButton.textContent = 'Are you sure?';
+
+                setTimeout(() => {
+                    yesButton.classList.remove('font-bold', 'text-xl');
+                    yesButton.textContent = 'Yes';
+                    yesClickedCount = 0;
+                }, 2000);
             };
             cancelButton.onclick = () => {
                 confirmDialog.classList.add('hidden');
