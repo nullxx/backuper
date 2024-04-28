@@ -1,21 +1,14 @@
-import { spawn } from "child_process";
+import { exec } from "child_process";
 
-export async function execute(cmd: string): Promise<number | null> {
-  const res = spawn(cmd, { shell: true, stdio: "ignore", detached: true });
+export async function execute(cmd: string) {
 
   return new Promise((resolve, reject) => {
-    let resolved = false;
-
-    function resolveOnce(code: number | null) {
-      if (!resolved) {
-        resolved = true;
-        resolve(code);
+    exec(cmd, { maxBuffer: 1024 * 1024 * 1024 }, (error, stdout, stderr) => {
+      if (error) {
+        return reject(new Error(`Exec error: ${stderr || stdout}`));
       }
-    }
 
-    res
-      .on("exit", (code) => resolveOnce(code))
-      .on("close", (code) => resolveOnce(code))
-      .on("error", reject);
-  });
+      resolve(0);
+    });
+  })
 }
