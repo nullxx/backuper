@@ -5,6 +5,7 @@ HBS.registerHelper("ifEquals", (arg1: any, arg2: any, options: any) => {
 });
 
 HBS.registerHelper("json", (context: any) => {
+  if (!context) return 'undefined';
   return JSON.stringify(context);
 });
 
@@ -75,4 +76,28 @@ HBS.registerHelper("upper", (str: string) => {
 
 HBS.registerHelper("divide", (a: number, b: number) => {
   return a / b;
+});
+
+HBS.registerHelper('tail', (text: string, length: number) => {  
+  return text.substring(0, length);
+});
+
+HBS.registerHelper('gt', (a: number, b: number) => {
+  return a > b;
+});
+
+HBS.registerHelper('lt', (a: number, b: number) => {
+  return a < b;
+});
+
+HBS.registerHelper('gte', (a: number, b: number) => {
+  return a >= b;
+});
+
+HBS.registerHelper('lte', (a: number, b: number) => {
+  return a <= b;
+});
+
+HBS.registerHelper('length', (arr: unknown[]) => {
+  return arr.length;
 });

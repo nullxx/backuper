@@ -55,8 +55,7 @@
           </label>
           <input required value="{{dbSchedule.backupIntervalSeconds}}"
             class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            id="backup-interval" placeholder="300" type="number" min="300"
-            name="backupIntervalSeconds" />
+            id="backup-interval" placeholder="300" type="number" min="300" name="backupIntervalSeconds" />
         </div>
         <div class="space-y-2">
           <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -65,8 +64,7 @@
           </label>
           <input required value="{{dbSchedule.backupRetentionSeconds}}"
             class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            id="backup-retention" placeholder="600" type="number" min="600"
-            name="backupRetentionSeconds" />
+            id="backup-retention" placeholder="600" type="number" min="600" name="backupRetentionSeconds" />
         </div>
       </div>
       <div class="space-y-2">
@@ -111,7 +109,7 @@
 
 <script>
 
-  const buckets = {{{ json buckets }}};
+  const buckets = {{{ json buckets }}} || [];
 
   const bucketSelect = document.getElementById('bucket-id');
   buckets.forEach(bucket => {
@@ -124,14 +122,16 @@
     bucketSelect.appendChild(option);
   });
 
-  function deleteBackupDeclaration(id) {
-    if (confirm(`ALL backups will be DELETED. Are you SURE you want to delete ${id}?`)) {
-      fetch(`/dbschedule/${id}`, {
-        method: 'DELETE',
-      }).then(() => {
-        window.location.href = '/new-dbschedule';
-      });
+  async function deleteBackupDeclaration(id) {
+    if (!(await ask('Are you sure?', 'ALL backups files will be DELETED. Delete ' + id + '?'))) {
+      return;
     }
+
+    await fetch(`/dbschedule/${id}`, {
+      method: 'DELETE',
+    });
+    window.location.href = '/new-dbschedule';
+
   }
 </script>
 

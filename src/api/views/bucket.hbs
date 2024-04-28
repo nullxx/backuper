@@ -85,17 +85,17 @@
     </div>
   </form>
 </div>
+
 <script>
-  function deleteBucket(id) {
-    if (!confirm('Are you sure you want to delete this bucket? Backups inside this will bucket WONT\'T be deleted')) {
+  async function deleteBucket(id) {
+    if (!(await ask('Are you sure you want to delete this bucket?', 'This action will delete the bucket and all its associated database declarations'))) {
       return;
     }
+
     fetch(`/bucket/${id}`, {
       method: 'DELETE',
     }).then(() => {
       window.location.href = '/new-bucket';
     });
   }
-
-
 </script>
