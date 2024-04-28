@@ -9,6 +9,9 @@ import { Op } from "@sequelize/core";
 import { createBackup, nextDateBackup, nextDateDeleteBackup } from "../lib/backup";
 import * as db from '../lib/database';
 
+const intervalMS = 30 * 1000;
+const timeoutWaitingToTerminateMS = 5 * 60 * 1000;
+
 const logger = Logger();
 
 const inBackup: Set<string> = new Set();
@@ -77,24 +80,26 @@ async function del() {
     }
 
     inDeletion.add(backup.id);
-
-    const bucket = await Bucket.findByPk(backup.bucketId);
-    if (!bucket) {
-      logger.error(`Bucket ${backup.bucketId} not found`);
-      continue;
-    }
-
-    const s3 = new S3({
-      accessKeyId: bucket.accessKeyId,
-      secretAccessKey: bucket.secretAccessKey,
-      endpoint: bucket.endpoint,
-      s3BucketEndpoint: bucket.s3BucketEndpoint,
-    });
-
     try {
+      const bucket = await Bucket.findByPk(backup.bucketId);
+      if (!bucket) {
+        logger.error(`Bucket ${backup.bucketId} not found`);
+        inDeletion.delete(backup.id);
+        continue;
+      }
+
+      const s3 = new S3({
+        accessKeyId: bucket.accessKeyId,
+        secretAccessKey: bucket.secretAccessKey,
+        endpoint: bucket.endpoint,
+        s3BucketEndpoint: bucket.s3BucketEndpoint,
+      });
+
+
       if (!backup.uri) {
         logger.error(`Backup ${backup.id} has no uri`);
         await backup.destroy();
+        inDeletion.delete(backup.id);
         continue;
       }
 
@@ -146,7 +151,7 @@ export async function stopBackupJob() {
       setTimeout(() => {
         reject(new Error("Timedout waiting for worker to exit"));
         worker?.terminate();
-      }, 10 * 1000);
+      }, timeoutWaitingToTerminateMS);
       worker?.on('exit', resolve);
       worker?.on('error', reject);
     });
@@ -157,7 +162,23 @@ export async function stopBackupJob() {
   return Promise.resolve();
 }
 
-const intervalMS = 30 * 1000;
+// wait until inBackup is empty and inDeletion is empty
+async function waitToFinish() {
+  return new Promise<void>((resolve) => {
+    function check() {
+      logger.debug("Checking if backup job is finished", `inBackup: ${inBackup.size}, inDeletion: ${inDeletion.size}`);
+      if (inBackup.size === 0 && inDeletion.size === 0) {
+        resolve();
+        return;
+      }
+
+      setTimeout(check, 500);
+    }
+
+    check();
+  });
+}
+
 if (!isMainThread) {
   logger.info("Backup job started");
 
@@ -171,7 +192,8 @@ if (!isMainThread) {
       fn().finally(() => {
         const endTime = Date.now();
         const duration = endTime - startTime;
-        const sleepTime = Math.min(0, intervalMS - duration);
+        const sleepTime = Math.max(0, intervalMS - duration);
+        logger.debug(`Schedule ${fn.name} took ${duration}ms. Sleeping for ${sleepTime}ms`);
 
         const wrapperFn = () => {
           schedule(fn, stopSignal);
@@ -223,7 +245,10 @@ if (!isMainThread) {
       if (message === "terminate") {
         logger.info("Backup job exiting");
         abortController.abort();
+
+        await waitToFinish();
         await db.deinitalize();
+
         logger.info("Backup job exited");
         process.exit(0);
       }
