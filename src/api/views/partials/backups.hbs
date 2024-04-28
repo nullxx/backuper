@@ -34,35 +34,35 @@
       <thead class="[&amp;_tr]:border-b">
         <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[100px]">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 w-[100px]">
             id
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
             Status
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
             Size
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
             doneAt
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
             deleteAt
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
             Full URI
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 {{#ifEquals backup.status 'completed'}}{{else}}hidden{{/ifEquals}}">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 {{#ifEquals backup.status 'completed'}}{{else}}hidden{{/ifEquals}}">
 
           </th>
           <th
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 {{#ifEquals backup.status 'completed'}}{{else}}hidden{{/ifEquals}}">
+            class="h-12 px-4 text-center align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 {{#ifEquals backup.status 'completed'}}{{else}}hidden{{/ifEquals}}">
           </th>
         </tr>
       </thead>
@@ -77,7 +77,7 @@
           <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
             <img class="w-6 h-6 mx-auto" src="/images/statuses/{{backup.status}}.png" alt="{{backup.status}}">
           </td>
-          <td colspan="100%">
+          <td colspan="5">
             <div
               class="mt-3 flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
               role="alert">
@@ -88,13 +88,23 @@
               </svg>
               <span class="sr-only">Info</span>
               <div>
-                <span class="message">{{tail backup.message 100}}</span>
+                <span class="message" data-tail="100">{{tail backup.message 100}}</span>
                 {{#if (gt (length backup.message) 100)}}
                 <button onclick="expand(this)" data-message="{{backup.message}}"
                   class="text-blue-600 hover:underline">more</button>
                 {{/if}}
               </div>
             </div>
+          </td>
+          <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+            <button onclick="deleteBackup('{{backup.id}}')"
+              class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex flex-col items-center">
+              <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+              </svg><span>Delete</span>
+            </button>
           </td>
         </tr>
         {{else}}
@@ -225,10 +235,22 @@
 </script>
 
 <script>
+  function tail(str, n) {
+    return str.substring(0, n);
+  }
+
   function expand(el) {
     const message = el.getAttribute('data-message');
+
+    if (el.textContent === 'less') {
+      const howManyChars = Number(el.parentElement.querySelector('.message').getAttribute('data-tail'));
+      el.parentElement.querySelector('.message').innerText = tail(message, howManyChars);
+      el.textContent = 'more';
+      return;
+    }
+
     el.parentElement.querySelector('.message').innerText = message;
-    el.remove();
+    el.textContent = 'less';
   }
 
 </script>
