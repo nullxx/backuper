@@ -1,0 +1,17 @@
+<section class="flex-1 lg:max-w-md max-w-full min-w-52">
+    <h2 class="mb-2 text-xl font-semibold">Database list</h2>
+    <div class="flex flex-col space-y-2" id="dbList">
+        {{#each dbSchedules}}
+        <a href="/backups/{{id}}" class="rounded-lg border bg-card text-card-foreground shadow flex items-center gap-2 p-4 hover:shadow-lg {{#ifEquals id ../dbSchedule.id}}border-solid border-2 border-gray-400{{/ifEquals}}">
+            <img class="w-8 h-8" src="/images/types/{{dbType}}.png" alt="{{dbType}}">
+            {{!-- <a class="block hover:underline hover:font-bold {{#ifEquals id ../dbSchedule.id}}underline font-bold{{/ifEquals}}"
+                for="{{id}}" href="/backups/{{id}}">{{name}}</a> --}}
+            <p class="block hover:underline hover:font-bold {{#ifEquals id ../dbSchedule.id}} font-bold{{/ifEquals}}">{{name}}</p>
+            <div class="flex-1"></div>
+            <p
+                class="text-sm font-medium text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {{timeLeft nextDate}}</p>
+        </a>
+        {{/each}}
+    </div>
+</section>

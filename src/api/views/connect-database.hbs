@@ -1,0 +1,67 @@
+<div class="flex justify-center w-full">
+    <form action="/connect-database" method="post" class="lg:min-w-[582px]">
+        <div class="flex flex-col space-y-1.5 p-6">
+            <h3 class="text-2xl font-semibold leading-none tracking-tight">MariaDB Credentials</h3>
+            <p class="text-gray-500 dark:text-gray-400">Enter your MariaDB connection details below</p>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="space-y-2">
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="host">
+                    Host
+                </label>
+                <input name="host" required value="{{dbConfig.host}}"
+                    class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="host" placeholder="localhost" />
+            </div>
+            <div class="space-y-2">
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="username">
+                    Username
+                </label>
+                <input name="username" required value="{{dbConfig.username}}"
+                    class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="username" placeholder="your_username" />
+            </div>
+            <div class="space-y-2">
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="password">
+                    Password
+                </label>
+                <input name="password" required value="{{dbConfig.password}}"
+                    class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="password" placeholder="your_password" type="password" />
+            </div>
+            <div class="space-y-2">
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="database">
+                    Database
+                </label>
+                <input name="database" required value="{{dbConfig.database}}"
+                    class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="database" placeholder="your_database" />
+            </div>
+            <div class="space-y-2">
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="port">
+                    Port
+                </label>
+                <input name="port" required value="{{dbConfig.port}}"
+                    class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="port" placeholder="3306" type="number" />
+            </div>
+        </div>
+        <div class="flex items-center p-6">
+            <button
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 w-full"
+                type="submit">
+                {{#if dbConfig.host}}Update{{else}}Connect{{/if}}
+            </button>
+        </div>
+    </form>
+</div>

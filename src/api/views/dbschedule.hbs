@@ -1,0 +1,154 @@
+<div class="flex w-full justify-center">
+  <div class="lg:min-w-[582px]">
+    <div class="flex flex-col space-y-1.5 p-6">
+      <h1 class="text-2xl font-semibold leading-none tracking-tight">{{#if
+        dbSchedule}}Update{{else}}Create{{/if}}
+        Database Backup Declaration</h1>
+      <p class="text-gray-500 dark:text-gray-400">Fill out the form to {{#if dbSchedule}}update{{else}}create{{/if}} a
+        new database
+        backup declaration.</p>
+    </div>
+    <form class="p-6 space-y-4" action="/{{#if dbSchedule}}dbschedule/{{dbSchedule.id}}{{else}}new-dbschedule{{/if}}"
+      method="POST">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="name">
+            Name
+          </label>
+          <input required value="{{dbSchedule.name}}" autofocus
+            class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            id="name" name="name" placeholder="Pets Store" />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="db-type">
+            DB Type
+          </label>
+          <select required
+            class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            id="db-type" name="dbType">
+            <!-- default option unselectable -->
+            <option value="" disabled selected>Select a database type</option>
+            <option value="mysql" {{#ifEquals dbSchedule.dbType 'mysql' }}selected{{/ifEquals}}>MySQL</option>
+            <option value="postgres" {{#ifEquals dbSchedule.dbType 'postgres' }}selected{{/ifEquals}}>Postgres</option>
+            <option value="mongodb" {{#ifEquals dbSchedule.dbType 'mongodb' }}selected{{/ifEquals}}>MongoDB</option>
+            <option value="mariadb" {{#ifEquals dbSchedule.dbType 'mariadb' }}selected{{/ifEquals}}>MariaDB</option>
+          </select>
+        </div>
+      </div>
+      <div class="space-y-2">
+
+        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="db-uri">
+          DB URI
+        </label>
+        <input required value="{{dbSchedule.dbURI}}" autocomplete="off"
+          class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          id="db-uri" name="dbUri" placeholder="mysql://user:password@host:port/database" />
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="backup-interval">
+            Backup Interval (seconds)
+          </label>
+          <input required value="{{dbSchedule.backupIntervalSeconds}}"
+            class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            id="backup-interval" placeholder="300" type="number" min="300"
+            name="backupIntervalSeconds" />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="backup-retention">
+            Backup Retention (seconds)
+          </label>
+          <input required value="{{dbSchedule.backupRetentionSeconds}}"
+            class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            id="backup-retention" placeholder="600" type="number" min="600"
+            name="backupRetentionSeconds" />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="bucket-id">
+          Bucket IDs
+        </label>
+        <select required
+          class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          id="bucket-id" name="bucketId">
+          <!-- default option unselectable -->
+          <option value="" disabled selected>Select a bucket</option>
+        </select>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="bucket-path">
+          Bucket Path
+        </label>
+        <input required value="{{dbSchedule.bucketPath}}"
+          class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          id="bucket-path" name="bucketPath" placeholder="Backup storage path" />
+      </div>
+      <div class="flex items-center p-6">
+
+        <button
+          class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 w-full"
+          type="submit">
+          {{#if dbSchedule}}Update{{else}}Create{{/if}}
+        </button>
+        {{#if dbSchedule}}
+        <button onclick="deleteBackupDeclaration('{{dbSchedule.id}}')"
+          class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 w-full"
+          type="button" role="button">
+          Delete
+        </button>
+        {{/if}}
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+
+  const buckets = {{{ json buckets }}};
+
+  const bucketSelect = document.getElementById('bucket-id');
+  buckets.forEach(bucket => {
+    const option = document.createElement('option');
+    option.value = bucket.id;
+    option.text = bucket.name;
+    if (bucket.id === '{{dbSchedule.bucketId}}') {
+      option.selected = true;
+    }
+    bucketSelect.appendChild(option);
+  });
+
+  function deleteBackupDeclaration(id) {
+    if (confirm(`ALL backups will be DELETED. Are you SURE you want to delete ${id}?`)) {
+      fetch(`/dbschedule/${id}`, {
+        method: 'DELETE',
+      }).then(() => {
+        window.location.href = '/new-dbschedule';
+      });
+    }
+  }
+</script>
+
+<script>
+  // on dburi change, update dbtype
+  const dbUriInput = document.getElementById('db-uri');
+  const dbTypeSelect = document.getElementById('db-type');
+  dbUriInput.addEventListener('input', () => {
+    const dbUri = dbUriInput.value;
+    if (dbUri.startsWith('mysql://')) {
+      dbTypeSelect.value = 'mysql';
+    } else if (dbUri.startsWith('postgres://')) {
+      dbTypeSelect.value = 'postgres';
+    } else if (dbUri.startsWith('mongodb://')) {
+      dbTypeSelect.value = 'mongodb';
+    } else if (dbUri.startsWith('mariadb://')) {
+      dbTypeSelect.value = 'mariadb';
+    }
+  });
+</script>

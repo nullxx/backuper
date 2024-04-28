@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backuper:
+    build: .
+    depends_on:
+      - mariadb
+    ports:
+      - "3500:3500"
+    volumes:
+      - ./vol/config:/app/config
+    environment:
+      - PORT=3500
+      - LOG_LEVEL=debug
+      - API_SESSION_SECRET=secret
+      - NODE_ENV=development
+      - RUN_JOBS=true
+    networks:
+      - mynetwork
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+    networks:
+      - mynetwork
+    volumes:
+      - ./vol/data:/var/lib/mysql
+
+networks:
+  mynetwork:

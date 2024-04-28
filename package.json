@@ -1,0 +1,48 @@
+{
+  "name": "backuper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tailwind:css": "postcss src/api/public/styles/tailwind.css -o src/api/public/styles/style.css",
+    "copy-assets": "node tools/copy-assets.js",
+    "clean": "node tools/clean.js",
+    "start": "node -r dotenv/config -r ts-node/register src/index.ts",
+    "dev": "concurrently \"npm run tailwind:css -- --watch\" \"nodemon --ignore config/ --exec node --trace-deprecation -r dotenv/config -r ts-node/register/transpile-only src/index.ts\"",
+    "build": "npm run tailwind:css && tsc && npm run copy-assets"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.37",
+    "aws-sdk": "^2.1608.0",
+    "chalk": "^4.1.2",
+    "compressing": "^1.10.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.2",
+    "express-session": "^1.18.0",
+    "fast-safe-stringify": "^2.1.1",
+    "mysql2": "^3.9.7",
+    "parse-db-uri": "^2.1.0",
+    "source-map-support": "^0.5.21",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@sequelize/cli": "^7.0.0-alpha.40",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/shelljs": "^0.8.15",
+    "@types/source-map-support": "^0.5.10",
+    "autoprefixer": "^10.4.19",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
+    "shelljs": "^0.8.5",
+    "tailwindcss": "^3.4.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

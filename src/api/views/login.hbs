@@ -1,0 +1,38 @@
+<div class="flex justify-center w-full">
+    <div class="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md p-6 space-y-4">
+        <div class="flex flex-col space-y-1.5 p-6">
+            <h3 class="whitespace-nowrap tracking-tight text-2xl font-bold">Sign in</h3>
+            <p class="text-sm text-muted-foreground">Enter your credentials to sign in to your account.</p>
+            {{#if userExist}}{{else}}<a href="/register" class="text-sm text-blue-500 hover:underline">Don't have an account? Register here.</a>{{/if}}
+        </div>
+        <div class="p-6">
+            <form class="space-y-4" action="/login" method="POST">
+                <div class="space-y-2">
+                    <label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        for="username">
+                        Username
+                    </label>
+                    <input required autofocus
+                        class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="username" name="username" placeholder="Enter your username" />
+                </div>
+                <div class="space-y-2">
+                    <label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        for="password">
+                        Password
+                    </label>
+                    <input minlength="8"
+                        class="dark:text-black flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="password" name="password" placeholder="Enter your password" type="password" />
+                </div>
+                <button
+                    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 w-full"
+                    type="submit">
+                    Log in
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
