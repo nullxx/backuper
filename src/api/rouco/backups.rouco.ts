@@ -80,7 +80,7 @@ router.delete(
             if (!backup) throw new APIError("Backup not found", true);
 
             await deleteBackup(backup);
-            res.redirect("/backups/" + backup.dbScheduleId);
+            res.send();
             // to here
         } catch (error) {
             next(error);

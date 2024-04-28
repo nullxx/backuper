@@ -78,7 +78,11 @@ router.post(
 
       await dbSchedule.save();
 
-      res.redirect("/dbschedule/" + dbSchedule.id);
+      res.render("dbschedule", {
+        layout: "index",
+        dbSchedule: dbSchedule.formatV1(),
+        buckets: await Bucket.findAll(),
+      });
     } catch (error) {
       next(error);
     }
@@ -148,7 +152,11 @@ router.post(
 
       await dbSchedule.save();
 
-      res.redirect("/dbschedule/" + dbSchedule.id);
+      res.render("dbschedule", {
+        layout: "index",
+        dbSchedule: dbSchedule.formatV1(),
+        buckets: await Bucket.findAll(),
+      });
     } catch (error) {
       next(error);
     }

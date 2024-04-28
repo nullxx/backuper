@@ -61,7 +61,8 @@ router.post(
             bucket.publicBaseUrl = publicBaseUrl;
 
             await bucket.save();
-            res.redirect("/bucket/" + bucket.id);
+            
+            res.render("bucket", { layout: "index", bucket: bucket.formatV1() });
         } catch (error) {
             next(error);
         }
@@ -77,7 +78,7 @@ router.delete(
 
             await bucket.destroy();
 
-            res.redirect("/");
+            res.send();
         } catch (error) {
             next(error);
         }
@@ -116,7 +117,7 @@ router.post("/new-bucket", async (req: Request, res: Response, next: NextFunctio
     
         await bucket.save();
     
-        res.redirect("/bucket/" + bucket.id);
+        res.render("bucket", { layout: "index", bucket: bucket.formatV1() });
     } catch (error) {
         next(error);
     }
