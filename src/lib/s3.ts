@@ -24,7 +24,8 @@ export function getProvider({
     credentials: {
       accessKeyId,
       secretAccessKey,
-    }
+    },
+    region: 'us-east-1'
   });
 
   return s3;
