@@ -2,8 +2,9 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { nextDateBackup, deleteBackup } from '../../lib/backup';
 import { Bucket } from '../../schemas/bucket.schema';
 import { DBSchedule } from '../../schemas/dbschedule.schema';
-import { Backup } from '../../schemas/backup.schema';
+import { Backup, BackupStatus } from '../../schemas/backup.schema';
 import { APIError } from '../error/APIError';
+import { Op } from '@sequelize/core';
 
 const router = Router();
 
@@ -58,6 +59,9 @@ router.delete(
             const backups = await Backup.findAll({
                 where: {
                     dbScheduleId: dbSchedule.id,
+                    status: {
+                        [Op.not]: BackupStatus.IN_PROGRESS,
+                    }
                 },
             });
 
