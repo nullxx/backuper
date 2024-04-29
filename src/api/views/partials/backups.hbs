@@ -138,7 +138,7 @@
                 <path fill-rule="evenodd"
                   d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z"
                   clip-rule="evenodd" />
-              </svg><span>Download</span>
+              </svg>
             </button>
           </td>
           <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -148,7 +148,7 @@
                 height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
-              </svg><span>Delete</span>
+              </svg>
             </button>
           </td>
 
@@ -205,7 +205,11 @@
 
   }
 
-  function downloadBackup(bucket, backup) {
+  async function downloadBackup(bucket, backup) {
+    if (!(await ask('Download?', `Download ${backup.size}B ?`))) {
+      return;
+    }
+
     // if bucket didn't enable public access, we can't download the backup
     if (bucket.publicBaseUrl.endsWith('/')) {
       bucket.publicBaseUrl = bucket.publicBaseUrl.slice(0, -1);
