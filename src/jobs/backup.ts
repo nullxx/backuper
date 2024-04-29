@@ -92,7 +92,8 @@ async function del() {
         accessKeyId: bucket.accessKeyId,
         secretAccessKey: bucket.secretAccessKey,
         endpoint: bucket.endpoint,
-        s3BucketEndpoint: bucket.s3BucketEndpoint,
+        disableHostPrefix: bucket.disableHostPrefix,
+        forcePathStyle: bucket.forcePathStyle,
       });
 
 

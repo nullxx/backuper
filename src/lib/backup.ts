@@ -56,7 +56,8 @@ export async function deleteBackup(backup: Backup) {
         accessKeyId: bucket.accessKeyId,
         secretAccessKey: bucket.secretAccessKey,
         endpoint: bucket.endpoint,
-        s3BucketEndpoint: bucket.s3BucketEndpoint,
+        disableHostPrefix: bucket.disableHostPrefix,
+        forcePathStyle: bucket.forcePathStyle,
     });
 
 
@@ -96,7 +97,8 @@ export async function createBackup(backup: Backup, dbSchedule: DBSchedule) {
             accessKeyId: bucket.accessKeyId,
             secretAccessKey: bucket.secretAccessKey,
             endpoint: bucket.endpoint,
-            s3BucketEndpoint: bucket.s3BucketEndpoint,
+            disableHostPrefix: bucket.disableHostPrefix,
+            forcePathStyle: bucket.forcePathStyle,
         });
 
         // generate an uri
@@ -111,14 +113,18 @@ export async function createBackup(backup: Backup, dbSchedule: DBSchedule) {
             uri,
             fs.createReadStream(outPath),
         );
-        backup.publicUrl = uploadResult.Location;
-        logger.debug(`Upload result: ${JSON.stringify(uploadResult)}`);
+        
+        logger.debug(`Upload result to ${bucket.bucketName}/${uri} ${JSON.stringify(uploadResult)}`);
 
         backup.status = BackupStatus.COMPLETED;
         backup.deleteAt = await nextDateDeleteBackup(dbSchedule);
         backup.size = fs.statSync(outPath).size;
         backup.doneAt = new Date();
         backup.uri = uri;
+
+        // diff between now and deleteAt
+        const publicUrlExpireIn = (backup.deleteAt.getTime() - new Date().getTime()) / 1000;
+        backup.publicUrl = await s3.getPublicUrl(bucket.bucketName, uri, publicUrlExpireIn);
         await backup.save();
     } finally {
         if (outPath) fs.unlinkSync(outPath);

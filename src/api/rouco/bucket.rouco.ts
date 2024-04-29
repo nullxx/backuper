@@ -40,8 +40,8 @@ router.post(
                 endpoint,
                 accessKey,
                 secretKey,
-                s3Endpoint = "false",
-                publicBaseUrl
+                disableHostPrefix = "false",
+                forcePathStyle = "false",
             } = req.body;
             logger.info("Bucket updated", {
                 name,
@@ -49,7 +49,8 @@ router.post(
                 endpoint,
                 accessKey,
                 secretKey,
-                s3Endpoint,
+                disableHostPrefix,
+                forcePathStyle,
             });
 
             bucket.name = name;
@@ -57,8 +58,8 @@ router.post(
             bucket.endpoint = endpoint;
             bucket.accessKeyId = accessKey;
             bucket.secretAccessKey = secretKey;
-            bucket.s3BucketEndpoint = s3Endpoint === "true";
-            bucket.publicBaseUrl = publicBaseUrl;
+            bucket.disableHostPrefix = disableHostPrefix === "true";
+            bucket.forcePathStyle = forcePathStyle === "true";
 
             await bucket.save();
             
@@ -94,25 +95,26 @@ router.post("/new-bucket", async (req: Request, res: Response, next: NextFunctio
             endpoint,
             accessKey,
             secretKey,
-            s3Endpoint = "false",
-            publicBaseUrl
+            disableHostPrefix = "false",
+            forcePathStyle = "false",
         } = req.body;
         logger.info("New bucket created", {
             name,
             endpoint,
             accessKey,
             secretKey,
-            s3Endpoint,
+            disableHostPrefix,
+            forcePathStyle,
         });
     
         const bucket = Bucket.build({
             name,
             bucketName,
             accessKeyId: accessKey,
-            s3BucketEndpoint: s3Endpoint === "true",
+            disableHostPrefix: disableHostPrefix === "true",
+            forcePathStyle: forcePathStyle === "true",
             secretAccessKey: secretKey,
             endpoint,
-            publicBaseUrl
         });
     
         await bucket.save();

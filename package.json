@@ -15,11 +15,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
     "@sequelize/core": "^7.0.0-alpha.40",
     "@sequelize/mysql": "^7.0.0-alpha.40",
-    "aws-sdk": "^2.1608.0",
     "chalk": "^4.1.2",
     "compressing": "^1.10.0",
     "dotenv": "^16.4.5",
@@ -48,7 +48,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
-
   "engines": {
     "node": ">=21.7.3",
     "npm": ">=10.5.0"

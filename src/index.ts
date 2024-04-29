@@ -1,5 +1,3 @@
-import './patches';
-
 import { startServer } from "./api";
 import * as db from "./lib/database";
 import Logger from "./lib/logger";

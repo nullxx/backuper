@@ -40,7 +40,7 @@ export class Backup extends Model<
   @Attribute(DataTypes.STRING)
   declare uri?: string;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.TEXT('medium'))
   declare publicUrl?: string;
 
   @Attribute(DataTypes.STRING)

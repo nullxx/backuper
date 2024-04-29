@@ -42,11 +42,11 @@ export class Bucket extends Model<
 
   @Attribute(DataTypes.BOOLEAN)
   @NotNull
-  declare s3BucketEndpoint: boolean;
+  declare disableHostPrefix: boolean;
 
-  @Attribute(DataTypes.STRING)
+  @Attribute(DataTypes.BOOLEAN)
   @NotNull
-  declare publicBaseUrl: string;
+  declare forcePathStyle: boolean;
 
   @Attribute(DataTypes.DATE)
   declare createdAt: CreationOptional<Date>;
@@ -62,8 +62,8 @@ export class Bucket extends Model<
       endpoint: this.endpoint,
       accessKeyId: this.accessKeyId,
       secretAccessKey: this.secretAccessKey,
-      s3BucketEndpoint: this.s3BucketEndpoint,
-      publicBaseUrl: this.publicBaseUrl,
+      disableHostPrefix: this.disableHostPrefix,
+      forcePathStyle: this.forcePathStyle,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

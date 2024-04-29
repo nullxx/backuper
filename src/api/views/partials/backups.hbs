@@ -210,13 +210,7 @@
       return;
     }
 
-    // if bucket didn't enable public access, we can't download the backup
-    if (bucket.publicBaseUrl.endsWith('/')) {
-      bucket.publicBaseUrl = bucket.publicBaseUrl.slice(0, -1);
-    }
-    const url = `${bucket.publicBaseUrl}/${backup.uri}`;
-
-    window.open(url, '_blank');
+    window.open(backup.publicUrl, '_blank');
   }
 </script>
 
