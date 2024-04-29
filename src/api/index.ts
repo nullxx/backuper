@@ -1,7 +1,7 @@
 import '../helpers/handlebars';
 
 import session from "express-session";
-// import lusca from 'lusca';
+import lusca from 'lusca';
 import express, { NextFunction, Request, Response } from "express";
 import * as Handlebars from "express-handlebars";
 import path from "path";
@@ -16,6 +16,7 @@ const logger = Logger();
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
@@ -50,10 +51,10 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === "production" }
 }));
 
-// app.use(lusca.csrf());
-// app.use(lusca.xssProtection(true));
-// app.use(lusca.nosniff());
-// app.use(lusca.referrerPolicy("same-origin"));
+app.use(lusca.csrf());
+app.use(lusca.xssProtection(true));
+app.use(lusca.nosniff());
+app.use(lusca.referrerPolicy("same-origin"));
 
 app.use(rouco);
 

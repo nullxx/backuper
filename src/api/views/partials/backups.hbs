@@ -3,7 +3,9 @@
     <h2 class="mb-2 text-xl font-semibold">{{dbSchedule.name}}</h2>
     <a href="/dbschedule/{{dbSchedule.id}}" class="text-primary-foreground hover:underline text-sm blue-600">edit</a>
     <div class="flex-1"></div>
-    <button onclick="deleteAllBackups('{{dbSchedule.id}}')"
+    {{> csrftokeninputdata }}
+    <input type="hidden" name="_csrf" value="{{_csrf}}">
+    <button onclick="deleteAllBackups('{{dbSchedule.id}}', this)"
       class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex gap-2 items-center"
       type="button" role="button">
       <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -97,7 +99,7 @@
             </div>
           </td>
           <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-            <button onclick="deleteBackup('{{backup.id}}')"
+            <button onclick="deleteBackup('{{backup.id}}', this)"
               class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex flex-col items-center">
               <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                 height="24" fill="none" viewBox="0 0 24 24">
@@ -142,7 +144,7 @@
             </button>
           </td>
           <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-            <button onclick="deleteBackup('{{backup.id}}')"
+            <button onclick="deleteBackup('{{backup.id}}', this)"
               class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex flex-col items-center {{#ifEquals backup.status 'completed'}}{{else}}hidden{{/ifEquals}}">
               <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                 height="24" fill="none" viewBox="0 0 24 24">
@@ -182,24 +184,32 @@
     backupsPlaceholder.classList.add('hidden');
   }
 
-  async function deleteBackup(id) {
+  async function deleteBackup(id, el) {
     if (!(await ask('Are you sure?', 'Delete backup file ' + id + '?'))) {
       return;
     }
 
     await fetch(`/backup/${id}`, {
       method: 'DELETE',
+      headers: {
+        'x-csrf-token': document.querySelector('input[data-csrf-token]').getAttribute('data-csrf-token')
+      },
+      credentials: 'same-origin'
     });
     location.reload();
   }
 
-  async function deleteAllBackups(dbScheduleId) {
+  async function deleteAllBackups(dbScheduleId, el) {
     if (!(await ask('Are you sure?', 'Delete all backups for this schedule? ' + dbScheduleId))) {
       return;
     }
 
     await fetch(`/backups/${dbScheduleId}`, {
       method: 'DELETE',
+      headers: {
+        'x-csrf-token': document.querySelector('input[data-csrf-token]').getAttribute('data-csrf-token')
+      },
+      credentials: 'same-origin'
     });
     location.reload();
 

@@ -131,6 +131,10 @@
 
     await fetch(`/dbschedule/${id}`, {
       method: 'DELETE',
+      headers: {
+        'x-csrf-token': document.querySelector('input[name="_csrf"]').value
+      },
+      credentials: 'same-origin'
     });
     window.location.href = '/new-dbschedule';
 
