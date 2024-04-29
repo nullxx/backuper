@@ -1,9 +1,10 @@
 {
   "name": "backuper",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A simple secured platform to backup your databases (MySQL, MariaDB, PostgreSQL and MongoDB) to a s3 compatible storage backend.",
+  "main": "src/index.ts",
   "scripts": {
+    "use-node": "nvm use",
     "tailwind:css": "postcss src/api/public/styles/tailwind.css -o src/api/public/styles/style.css",
     "copy-assets": "node tools/copy-assets.js",
     "clean": "node tools/clean.js",
@@ -14,8 +15,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  
   "dependencies": {
-    "@sequelize/core": "^7.0.0-alpha.37",
+    "@sequelize/core": "^7.0.0-alpha.40",
+    "@sequelize/mysql": "^7.0.0-alpha.40",
     "aws-sdk": "^2.1608.0",
     "chalk": "^4.1.2",
     "compressing": "^1.10.0",
@@ -44,5 +47,10 @@
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.5.1"
   }
 }

@@ -5,7 +5,6 @@ import { ConfigType, readConfig, writeConfig } from '../../lib/fsconfig';
 import * as db from '../../lib/database';
 import { startJobs } from '../../jobs';
 import { requireAuthSoft } from '../middlewares/auth';
-import { APIError } from '../error/APIError';
 
 const router = Router();
 
@@ -17,7 +16,7 @@ router.get(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const dbConfig = await readConfig(ConfigType.DB);
-            res.render('connect-database', { layout: Object.keys(dbConfig).length === 0 ? 'empty' : 'index', dbConfig })
+            res.render('connect-database', { layout: Object.keys(dbConfig ?? {}).length === 0 ? 'empty' : 'index', dbConfig })
         } catch (error) {
             next(error);
         }
@@ -53,12 +52,12 @@ router.post(
                 port,
             });
 
-            if (!db.isInitialized()) {
-                await db.initialize();
-                await startJobs();
-            } else {
-                throw new APIError('Config saved but database already initialized. Please restart the server to apply changes.', true);
+            if (db.isInitialized()) {
+                await db.deinitalize();
             }
+
+            await db.initialize();
+            await startJobs();
 
             res.redirect('/');
         } catch (error) {

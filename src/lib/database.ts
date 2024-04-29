@@ -1,9 +1,9 @@
-import path from "path";
-import { fileURLToPath } from 'node:url';
 import Logger from "./logger";
-import { Sequelize, importModels } from "@sequelize/core";
+import { Sequelize } from "@sequelize/core";
+import { MySqlDialect } from '@sequelize/mysql';
+
 import { createMySQLConnection } from "./mysql";
-import { ConfigType, readConfig } from "./fsconfig";
+import { ConfigType, readConfig, writeConfig } from "./fsconfig";
 import { defineRelations } from "../schemas/relations";
 import * as models from "../schemas";
 const logger = Logger();
@@ -32,20 +32,20 @@ let currentDatabase: Sequelize | null = null;
 
 export async function initialize(): Promise<Sequelize> {
   const fsDbConfig = await readConfig(ConfigType.DB);
-  if (!fsDbConfig.host || !fsDbConfig.username || !fsDbConfig.password || !fsDbConfig.database || !fsDbConfig.port) {
+  if (!fsDbConfig?.host || !fsDbConfig?.username || !fsDbConfig?.password || !fsDbConfig?.database || !fsDbConfig?.port) {
     throw new Error('Missing database configuration');
   }
 
   const dbConfig = {
     host: fsDbConfig.host,
-    username: fsDbConfig.username,
+    user: fsDbConfig.username,
     password: fsDbConfig.password,
     database: fsDbConfig.database,
     port: Number(fsDbConfig.port),
   };
   const mysqlConnection = await createMySQLConnection({
     host: dbConfig.host,
-    user: dbConfig.username,
+    user: dbConfig.user,
     password: dbConfig.password,
     port: dbConfig.port,
   });
@@ -57,7 +57,7 @@ export async function initialize(): Promise<Sequelize> {
 
 
   currentDatabase = new Sequelize({
-    dialect: "mysql",
+    dialect: MySqlDialect,
     logging:
       process.env.MYSQL_LOGGING === "true"
         ? (message: string) => logger.debug(message)
@@ -76,6 +76,7 @@ export async function initialize(): Promise<Sequelize> {
 
   await currentDatabase.sync({ alter: true });
   logger.info("## Database synced ##");
+  await writeConfig(ConfigType.DB_INITIALIZED, { initialized: true });
 
   return currentDatabase;
 }
@@ -83,6 +84,7 @@ export async function initialize(): Promise<Sequelize> {
 export async function deinitalize() {
   logger.debug("## Deinitializing database ##");
   await currentDatabase?.close().catch((error) => logger.error(error));
+  currentDatabase?.removeAllModels();
 
   runningHooks.forEach((delHook) => delHook());
   runningHooks.length = 0;
