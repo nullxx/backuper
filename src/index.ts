@@ -45,7 +45,7 @@ function registerEvents() {
 
   process.on('uncaughtException', (error) => {
     logger.error('Uncaught Exception thrown', error);
-    process.exit(1);
+    setImmediate(() => process.exit(1));
   });
 
 
@@ -59,7 +59,7 @@ function registerEvents() {
 
       await cleanup();
 
-      process.exit(0);
+      setImmediate(() => process.exit(0));
     });
   });
 }
@@ -80,7 +80,7 @@ async function main() {
 
   } catch (error) {
     logger.error(error);
-    process.exit(1);
+    setImmediate(() => process.exit(1));
   }
 }
 
