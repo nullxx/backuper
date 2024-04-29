@@ -157,7 +157,13 @@ export async function stopBackupJob() {
       worker?.on('error', reject);
     });
     worker.postMessage('terminate');
-    return promise;
+    
+    await promise.finally(() => { // finally will run even if the promise is rejected
+      worker = null;
+    });
+  } else {
+    // not a bad thing: could be that the worker was stopped to update db config but as db connection failed the worker was not started again. At program termination this is called but the worker is not active
+    logger.warn("Called stopBackupJob but worker not active");
   }
 
   return Promise.resolve();
