@@ -2,9 +2,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Logger from '../../lib/logger';
 import { ConfigType, readConfig, writeConfig } from '../../lib/fsconfig';
-import * as db from '../../lib/database';
-import { startJobs } from '../../jobs';
 import { requireAuthSoft } from '../middlewares/auth';
+import { launch, unlaunch } from '../../launch';
 
 const router = Router();
 
@@ -52,12 +51,8 @@ router.post(
                 port,
             });
 
-            if (db.isInitialized()) {
-                await db.deinitalize();
-            }
-
-            await db.initialize();
-            await startJobs();
+            await unlaunch();
+            await launch();
 
             res.redirect('/');
         } catch (error) {

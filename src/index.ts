@@ -1,7 +1,6 @@
 import { startServer } from "./api";
-import * as db from "./lib/database";
 import Logger from "./lib/logger";
-import { startJobs, stopJobs } from "./jobs";
+import { launch, unlaunch } from "./launch";
 
 const logger = Logger();
 
@@ -22,8 +21,7 @@ function verifyEnv() {
 async function cleanup() {
   logger.info("Cleaning up");
 
-  await stopJobs().catch((error) => logger.error("Error stopping jobs", error));
-  await db.deinitalize().catch((error) => logger.error("Error deinitializing database at cleanup", error));
+  await unlaunch().catch((error) => logger.error("Error unlaunching at cleanup", error));
 
   logger.info("Cleaned up");
 }
@@ -58,11 +56,9 @@ async function main() {
   try {
     verifyEnv();
 
-    // database
-    // call initialize: if config exists will proceed, if not do nothing
-    await db.initialize().catch((error) => logger.error("Error initializing database at startup", error));
-
-    if (db.isInitialized()) await startJobs();
+    // call launch (database, jobs): if config exists will proceed, if not do nothing
+    await launch().catch((error) => logger.error("Error launching at startup", error));
+    
     // server
     const port = await startServer();
     logger.info(`Server started at port ${port}`);
