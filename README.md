@@ -23,6 +23,40 @@ docker-compose up --build
 > The dashboard
 ![The dashboard](./demo/dash.png)
 
+## Development
+
+### Requirements
+See the [package.json](./package.json) "engines" key for better understanding.
+
+```json
+{
+  "engines": {
+    "node": ">=21.7.3",
+    "npm": ">=10.5.0"
+  }
+}
+```
+
+To get the versions of node and npm installed on your machine, run the following commands:
+
+```bash
+nvm install <node_version>
+nvm use <node_version>
+node -v
+npm -v
+```
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running the app
+
+```bash
+npm run dev
+```
 
 ## License
 
