@@ -69,7 +69,7 @@ const Logger = (...additionalParams: logObject[]): winston.Logger => {
       winston.format.errors(),
       winston.format.simple(),
     ),
-    transports: [new winston.transports.Console()],
+    transports: [new winston.transports.Console(), new winston.transports.File({ filename: 'all-logs.log' })],
   });
 
   const wrapper =
