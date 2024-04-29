@@ -3,10 +3,13 @@
         <div class="flex flex-col space-y-1.5 p-6">
             <h3 class="whitespace-nowrap tracking-tight text-2xl font-bold">Sign in</h3>
             <p class="text-sm text-muted-foreground">Enter your credentials to sign in to your account.</p>
-            {{#if userExist}}{{else}}<a href="/register" class="text-sm text-blue-500 hover:underline">Don't have an account? Register here.</a>{{/if}}
+            {{#if userExist}}{{else}}<a href="/register" class="text-sm text-blue-500 hover:underline">Don't have an
+                account? Register here.</a>{{/if}}
         </div>
         <div class="p-6">
             <form class="space-y-4" action="/login" method="POST">
+                {{> csrftokeninput }}
+
                 <div class="space-y-2">
                     <label
                         class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

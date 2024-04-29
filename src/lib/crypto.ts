@@ -1,9 +1,9 @@
-import crypto from "crypto";
+import { hashSync, compareSync } from "bcrypt";
 
 export function hashPassword(password: string): string {
-  return crypto.createHash("sha512").update(password).digest("hex");
+  return hashSync(password, Number(process.env.ENCRYPT_SALT_ROUNDS));
 }
 
 export function checkPassword(password: string, hash: string): boolean {
-  return hashPassword(password) === hash;
+  return compareSync(password, hash);
 }

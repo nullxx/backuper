@@ -26,8 +26,6 @@ export async function doPostgreSQLBackupToFile({
         } -F ${compressFile ? "t" : "p"} ${connectionOpts.database} > ${path}`,
     ].join(" ");
 
-    logger.debug(`Running command: ${cmd}`);
-
     await execute(cmd);
 
     return path;

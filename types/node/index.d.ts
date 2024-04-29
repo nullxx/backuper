@@ -6,5 +6,6 @@ declare namespace NodeJS {
     LOG_LEVEL: string;
     API_SESSION_SECRET: string;
     RUN_JOBS: string;
+    ENCRYPT_SALT_ROUNDS: string;
   }
 }

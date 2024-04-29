@@ -44,8 +44,6 @@ export async function doMySQLBackupToFile({
     path
   ].join(" ");
 
-  logger.debug(`Running command: ${cmd}`);
-
   await execute(cmd);
 
   let newPath = path;

@@ -10,6 +10,8 @@
     </div>
     <form class="p-6 space-y-4" action="/{{#if dbSchedule}}dbschedule/{{dbSchedule.id}}{{else}}new-dbschedule{{/if}}"
       method="POST">
+      {{> csrftokeninput }}
+
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div class="space-y-2">
           <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

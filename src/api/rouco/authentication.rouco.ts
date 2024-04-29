@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { User } from '../../schemas';
-import { hashPassword } from '../../lib/crypto';
+import { checkPassword, hashPassword } from '../../lib/crypto';
 import { requireAuth } from '../middlewares/auth';
 import { APIError } from '../error/APIError';
 
@@ -68,11 +68,12 @@ router.post(
             const user = await User.findOne({
                 where: {
                     username,
-                    passwordHash: hashPassword(password),
                 },
             });
-
             if (!user) throw new APIError("Invalid username or password", true);
+
+            const passwordMatch = checkPassword(password, user.passwordHash);
+            if (!passwordMatch) throw new APIError("Invalid username or password", true);
 
             req.session.user = user;
             res.redirect("/");
