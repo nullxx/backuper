@@ -67,6 +67,7 @@ async function main() {
 
   } catch (error) {
     logger.error(error);
+    process.exit(1);
   }
 }
 
