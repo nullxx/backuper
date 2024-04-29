@@ -1,6 +1,7 @@
 import { startServer } from "./api";
 import Logger from "./lib/logger";
 import { launch, unlaunch } from "./launch";
+import { which } from "./lib/exec";
 
 const logger = Logger();
 
@@ -15,6 +16,17 @@ function verifyEnv() {
   const missingEnv = requiredEnv.filter(env => !process.env[env]);
   if (missingEnv.length) {
     throw new Error(`Missing environment variables: ${missingEnv.join(", ")}`);
+  }
+}
+
+async function verifyCommands() {
+  const commands = ['mysqldump', 'pg_dump', 'mongodump'];
+
+  const missingCommands = await Promise.all(commands.map(async (cmd) => which(cmd).then((exit) => ({ cmd, exit })).catch(() => ({ cmd, exit: 1 })))
+  ).then((results) => results.filter(({ exit }) => exit !== 0).map(({ cmd }) => cmd));
+
+  if (missingCommands.length > 0) {
+    throw new Error(`Missing commands: ${missingCommands.join(", ")}. Please install them`);
   }
 }
 
@@ -55,10 +67,11 @@ function registerEvents() {
 async function main() {
   try {
     verifyEnv();
+    await verifyCommands();
 
     // call launch (database, jobs): if config exists will proceed, if not do nothing
     await launch().catch((error) => logger.error("Error launching at startup", error));
-    
+
     // server
     const port = await startServer();
     logger.info(`Server started at port ${port}`);
