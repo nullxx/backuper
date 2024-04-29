@@ -26,6 +26,10 @@ docker-compose up --build
 ## Development
 
 ### Requirements
+
+
+#### node and npm
+
 See the [package.json](./package.json) "engines" key for better understanding.
 
 ```json
@@ -37,14 +41,22 @@ See the [package.json](./package.json) "engines" key for better understanding.
 }
 ```
 
-To get the versions of node and npm installed on your machine, run the following commands:
+To get the versions of node and npm installed on your machine, run the following commands inside project folder:
 
 ```bash
-nvm install <node_version>
-nvm use <node_version>
-node -v
-npm -v
+nvm install
+nvm use
+node -v # v21.7.3
+npm -v # 10.5.0
 ```
+
+#### External dependencies
+
+- `mysqldump` (MySQL and MariaDB). Comes in the `mysql-client` package.
+- `pg_dump` (PostgreSQL). Comes in the `postgresql-client` package.
+- `mongodump` (MongoDB). Comes in the `mongodb-tools` package.
+
+Depending on your OS, you will have different ways to install these dependencies.
 
 ### Installation
 
