@@ -200,7 +200,6 @@ if (!isMainThread) {
         const endTime = Date.now();
         const duration = endTime - startTime;
         const sleepTime = Math.max(0, intervalMS - duration);
-        logger.debug(`Schedule ${fn.name} took ${duration}ms. Sleeping for ${sleepTime}ms`);
 
         const wrapperFn = () => {
           schedule(fn, stopSignal);
@@ -213,6 +212,7 @@ if (!isMainThread) {
           return;
         }
 
+        logger.debug(`Schedule ${fn.name} took ${duration}ms. Sleeping for ${sleepTime}ms`);
         timeout = setTimeout(wrapperFn, sleepTime);
       });
     }
@@ -257,7 +257,7 @@ if (!isMainThread) {
         await db.deinitalize();
 
         logger.info("Backup job exited");
-        process.exit(0);
+        setTimeout(() => process.exit(0), 0);
       }
 
     });
