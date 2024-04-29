@@ -257,7 +257,8 @@ if (!isMainThread) {
         await db.deinitalize();
 
         logger.info("Backup job exited");
-        setTimeout(() => process.exit(0), 0);
+        // setImmediate to wait the I/O to finish
+        setImmediate(() => process.exit(0));
       }
 
     });
