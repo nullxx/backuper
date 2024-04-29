@@ -16,8 +16,6 @@ const logger = Logger();
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(rateLimitMiddleware);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
@@ -41,6 +39,8 @@ app.engine(
 );
 
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(rateLimitMiddleware);
 
 if (!process.env.API_SESSION_SECRET) throw new Error("API_SESSION_SECRET is required");
 app.use(session({
