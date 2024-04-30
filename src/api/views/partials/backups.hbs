@@ -24,7 +24,7 @@
     <span class="text-lg">each {{secondsToTime dbSchedule.backupIntervalSeconds}}</span>, <span
       class="text-lg">retaining</span> backups <span class="text-lg">for {{secondsToTime
       dbSchedule.backupRetentionSeconds}}.</span>
-    (~{{divide dbSchedule.backupRetentionSeconds dbSchedule.backupIntervalSeconds}} backups at a time)
+    (~{{round 2 (divide dbSchedule.backupRetentionSeconds dbSchedule.backupIntervalSeconds)}} backups at a time)
   </p>
 
   <p>

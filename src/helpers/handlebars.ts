@@ -78,7 +78,18 @@ HBS.registerHelper("divide", (a: number, b: number) => {
   return a / b;
 });
 
-HBS.registerHelper('tail', (text: string, length: number) => {  
+HBS.registerHelper("round", (digits: number, a: number) => {
+  let formatted = a.toFixed(digits);
+  
+  // if the number is an integer, remove the decimal part
+  if (formatted.slice(-1) === '0') {
+    formatted = a.toFixed(0);
+  }
+
+  return formatted;
+});
+
+HBS.registerHelper('tail', (length: number, text: string) => {
   return text.substring(0, length);
 });
 
