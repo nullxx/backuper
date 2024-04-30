@@ -7,5 +7,7 @@ declare namespace NodeJS {
     API_SESSION_SECRET: string;
     RUN_JOBS: string;
     ENCRYPT_SALT_ROUNDS: string;
+    DB_ENCRYPT_ATTR_KEY: string
+    DB_ENCRYPT_ATTR_IV: string;
   }
 }

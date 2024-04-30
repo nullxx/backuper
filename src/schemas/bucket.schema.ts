@@ -8,6 +8,9 @@ import {
 } from "@sequelize/core";
 import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/decorators-legacy';
 import { BucketTableName } from "./tableDefinition";
+import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
+
+if (!process.env.DB_ENCRYPT_ATTR_KEY || !process.env.DB_ENCRYPT_ATTR_IV) throw new Error('Missing environment variables: DB_ENCRYPT_ATTR_KEY, DB_ENCRYPT_ATTR_IV');
 
 @Table({ tableName: BucketTableName, timestamps: true, indexes: [] })
 export class Bucket extends Model<
@@ -32,12 +35,14 @@ export class Bucket extends Model<
   @NotNull
   declare endpoint: string;
 
-  @Attribute(DataTypes.STRING)
-  @NotNull
+  // @Attribute(DataTypes.STRING)
+  // @NotNull
+  @EncryptedAttribute(DataTypes.STRING, { key: process.env.DB_ENCRYPT_ATTR_KEY, iv: process.env.DB_ENCRYPT_ATTR_IV })
   declare accessKeyId: string;
 
-  @Attribute(DataTypes.STRING)
-  @NotNull
+  // @Attribute(DataTypes.STRING)
+  // @NotNull
+  @EncryptedAttribute(DataTypes.STRING, { key: process.env.DB_ENCRYPT_ATTR_KEY, iv: process.env.DB_ENCRYPT_ATTR_IV })
   declare secretAccessKey: string;
 
   @Attribute(DataTypes.BOOLEAN)

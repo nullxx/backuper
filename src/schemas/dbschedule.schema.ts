@@ -10,6 +10,7 @@ import {
 import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/decorators-legacy';
 import { DBScheduleTableName } from "./tableDefinition";
 import type { Bucket } from "./bucket.schema";
+import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
 
 export enum DBType {
   MARIADB = "mariadb",
@@ -33,8 +34,9 @@ export class DBSchedule extends Model<
   @NotNull
   declare name: string;
 
-  @Attribute(DataTypes.STRING)
-  @NotNull
+  // @Attribute(DataTypes.STRING)
+  // @NotNull
+  @EncryptedAttribute(DataTypes.TEXT('medium'), { key: process.env.DB_ENCRYPT_ATTR_KEY, iv: process.env.DB_ENCRYPT_ATTR_IV })
   declare dbURI: string;
 
   @Attribute(DataTypes.STRING)

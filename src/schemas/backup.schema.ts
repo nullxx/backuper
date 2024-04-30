@@ -11,6 +11,7 @@ import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/
 import { BackupTableName } from "./tableDefinition";
 import type { DBSchedule } from "./dbschedule.schema";
 import type { Bucket } from "./bucket.schema";
+import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
 
 export enum BackupStatus {
   IN_PROGRESS = "in_progress",
@@ -40,14 +41,16 @@ export class Backup extends Model<
   @Attribute(DataTypes.STRING)
   declare uri?: string;
 
-  @Attribute(DataTypes.TEXT('medium'))
+  // @Attribute(DataTypes.TEXT('medium'))
+  @EncryptedAttribute(DataTypes.TEXT('medium'), { key: process.env.DB_ENCRYPT_ATTR_KEY, iv: process.env.DB_ENCRYPT_ATTR_IV })
   declare publicUrl?: string;
 
   @Attribute(DataTypes.STRING)
   @NotNull
   declare status: BackupStatus;
 
-  @Attribute(DataTypes.TEXT('long'))
+  // @Attribute(DataTypes.TEXT('long'))
+  @EncryptedAttribute(DataTypes.TEXT('long'), { key: process.env.DB_ENCRYPT_ATTR_KEY, iv: process.env.DB_ENCRYPT_ATTR_IV })
   declare message?: string;
 
   @Attribute(DataTypes.DATE)
