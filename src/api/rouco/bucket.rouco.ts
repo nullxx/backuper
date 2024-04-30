@@ -43,15 +43,6 @@ router.post(
                 disableHostPrefix = "false",
                 forcePathStyle = "false",
             } = req.body;
-            logger.info("Bucket updated", {
-                name,
-                bucketName,
-                endpoint,
-                accessKey,
-                secretKey,
-                disableHostPrefix,
-                forcePathStyle,
-            });
 
             bucket.name = name;
             bucket.bucketName = bucketName;
@@ -98,14 +89,6 @@ router.post("/new-bucket", async (req: Request, res: Response, next: NextFunctio
             disableHostPrefix = "false",
             forcePathStyle = "false",
         } = req.body;
-        logger.info("New bucket created", {
-            name,
-            endpoint,
-            accessKey,
-            secretKey,
-            disableHostPrefix,
-            forcePathStyle,
-        });
     
         const bucket = Bucket.build({
             name,

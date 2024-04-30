@@ -53,16 +53,6 @@ router.post(
         bucketPath,
       } = req.body;
 
-      logger.info("New dbschedule created", {
-        name,
-        dbUri,
-        dbType,
-        backupIntervalSeconds,
-        backupRetentionSeconds,
-        bucketId,
-        bucketPath,
-      });
-
       const bucket = await Bucket.findByPk(bucketId);
       if (!bucket) throw new APIError("Bucket not found", true);
 
@@ -128,16 +118,6 @@ router.post(
         bucketId,
         bucketPath,
       } = req.body;
-
-      logger.info("DBSchedule updated", {
-        name,
-        dbUri,
-        dbType,
-        backupIntervalSeconds,
-        backupRetentionSeconds,
-        bucketId,
-        bucketPath,
-      });
 
       const bucket = await Bucket.findByPk(bucketId);
       if (!bucket) throw new APIError("Bucket not found", true);
