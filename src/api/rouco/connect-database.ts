@@ -35,14 +35,6 @@ router.post(
                 port,
             } = req.body;
 
-            logger.info('Database connected', {
-                host,
-                username,
-                password,
-                database,
-                port,
-            });
-
             await writeConfig(ConfigType.DB, {
                 host,
                 username,
