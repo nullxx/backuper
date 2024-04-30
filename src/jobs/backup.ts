@@ -3,10 +3,8 @@ import { Worker, isMainThread, parentPort } from 'worker_threads';
 import Logger from "../lib/logger";
 import { Backup, BackupStatus } from "../schemas/backup.schema";
 import { DBSchedule } from "../schemas/dbschedule.schema";
-import { S3 } from "../lib/s3";
-import { Bucket } from "../schemas/bucket.schema";
 import { Op } from "@sequelize/core";
-import { createBackup, nextDateBackup, nextDateDeleteBackup } from "../lib/backup";
+import { createBackup, deleteBackup, nextDateBackup, nextDateDeleteBackup } from "../lib/backup";
 import * as db from '../lib/database';
 
 const intervalMS = 30 * 1000;
@@ -81,32 +79,7 @@ async function del() {
 
     inDeletion.add(backup.id);
     try {
-      const bucket = await Bucket.findByPk(backup.bucketId);
-      if (!bucket) {
-        logger.error(`Bucket ${backup.bucketId} not found`);
-        inDeletion.delete(backup.id);
-        continue;
-      }
-
-      const s3 = new S3({
-        accessKeyId: bucket.accessKeyId,
-        secretAccessKey: bucket.secretAccessKey,
-        endpoint: bucket.endpoint,
-        disableHostPrefix: bucket.disableHostPrefix,
-        forcePathStyle: bucket.forcePathStyle,
-      });
-
-
-      if (!backup.uri) {
-        logger.error(`Backup ${backup.id} has no uri`);
-        await backup.destroy();
-        inDeletion.delete(backup.id);
-        continue;
-      }
-
-      const deleteResult = await s3.deleteObject(bucket.bucketName, backup.uri);
-      logger.debug(`Deleted backup ${backup.id}`, deleteResult);
-      await backup.destroy();
+      await deleteBackup(backup);
     } catch (error) {
       logger.error(`Error deleting backup ${backup.id}`, error);
     }

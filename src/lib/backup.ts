@@ -63,7 +63,14 @@ export async function deleteBackup(backup: Backup) {
 
     if (backup.uri) {
         const obJExists = await s3.objectExists(bucket.bucketName, backup.uri);
-        if (!obJExists) await s3.deleteObject(bucket.bucketName, backup.uri);
+        if (obJExists) {
+            const deleteObjResult = await s3.deleteObject(bucket.bucketName, backup.uri);
+            logger.debug(`Delete object in bucket (${bucket.id}) ${bucket.bucketName}/${backup.uri}: ${JSON.stringify(deleteObjResult)}`);
+        } else {
+            logger.warn(`Object at bucket id (${bucket.id}) with full uri ${bucket.bucketName}/${backup.uri} not found`);
+        }
+    } else {
+        logger.warn(`Backup ${backup.id} uri is empty`);
     }
 
     await backup.destroy();
