@@ -10,7 +10,7 @@ import {
 import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/decorators-legacy';
 import { DBScheduleTableName } from "./tableDefinition";
 import type { Bucket } from "./bucket.schema";
-import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
+import { EncryptedAttribute } from "../helpers/sequelize/encrypt-attribute";
 
 export enum DBType {
   MARIADB = "mariadb",

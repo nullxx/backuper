@@ -11,7 +11,7 @@ import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/
 import { BackupTableName } from "./tableDefinition";
 import type { DBSchedule } from "./dbschedule.schema";
 import type { Bucket } from "./bucket.schema";
-import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
+import { EncryptedAttribute } from "../helpers/sequelize/encrypt-attribute";
 
 export enum BackupStatus {
   IN_PROGRESS = "in_progress",

@@ -1,4 +1,4 @@
-import '../helpers/handlebars';
+import '../helpers/handlebars/helpers';
 
 import session from "express-session";
 import lusca from 'lusca';

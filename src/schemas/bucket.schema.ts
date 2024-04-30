@@ -8,7 +8,7 @@ import {
 } from "@sequelize/core";
 import { Attribute, Table, Default, PrimaryKey, NotNull } from '@sequelize/core/decorators-legacy';
 import { BucketTableName } from "./tableDefinition";
-import { EncryptedAttribute } from "../lib/helpers/encrypt-attribute";
+import { EncryptedAttribute } from "../helpers/sequelize/encrypt-attribute";
 
 if (!process.env.DB_ENCRYPT_ATTR_KEY || !process.env.DB_ENCRYPT_ATTR_IV) throw new Error('Missing environment variables: DB_ENCRYPT_ATTR_KEY, DB_ENCRYPT_ATTR_IV');
 
