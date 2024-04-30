@@ -1,8 +1,9 @@
 import crypto, { CipherGCMTypes } from 'crypto';
 import { DataTypeClassOrInstance, DataTypes, Model } from "@sequelize/core";
-import { Attribute, BeforeSave, AfterFind, AllowNull } from '@sequelize/core/decorators-legacy';
+import { Attribute, BeforeSave, AfterFind, AllowNull, BeforeFindAfterOptions } from '@sequelize/core/decorators-legacy';
+import stringify from 'fast-safe-stringify';
 
-type CipherAlgorithm = CipherGCMTypes
+type CipherAlgorithm = CipherGCMTypes;
 
 const defaultAlgorithm: CipherAlgorithm = 'aes-256-gcm';
 const defaultAttributePrefix = '_encrypted_';
@@ -41,31 +42,31 @@ const supportedTypes: DataTypeClassOrInstance[] = [
     DataTypes.STRING,
     DataTypes.TEXT,
     DataTypes.UUID,
-    DataTypes.UUIDV1, 
+    DataTypes.UUIDV1,
     DataTypes.UUIDV4, DataTypes.CHAR,
-    DataTypes.INET, 
-    DataTypes.CIDR, 
+    DataTypes.INET,
+    DataTypes.CIDR,
     DataTypes.MACADDR,
-    DataTypes.MACADDR8, 
-    DataTypes.ENUM, 
+    DataTypes.MACADDR8,
+    DataTypes.ENUM,
     DataTypes.INTEGER,
-    DataTypes.SMALLINT, 
-    DataTypes.TINYINT, 
+    DataTypes.SMALLINT,
+    DataTypes.TINYINT,
     DataTypes.MEDIUMINT,
-    DataTypes.BIGINT, 
-    DataTypes.FLOAT, 
+    DataTypes.BIGINT,
+    DataTypes.FLOAT,
     DataTypes.DOUBLE,
-    DataTypes.DECIMAL, 
-    DataTypes.REAL, 
+    DataTypes.DECIMAL,
+    DataTypes.REAL,
     DataTypes.JSON,
-    DataTypes.JSONB, 
-    DataTypes.DATE, 
+    DataTypes.JSONB,
+    DataTypes.DATE,
     DataTypes.DATEONLY,
-    DataTypes.TIME, 
-    DataTypes.BOOLEAN, 
+    DataTypes.TIME,
+    DataTypes.BOOLEAN,
     DataTypes.RANGE(DataTypes.DATE),
-    DataTypes.RANGE(DataTypes.DATEONLY), 
-    DataTypes.BLOB, 
+    DataTypes.RANGE(DataTypes.DATEONLY),
+    DataTypes.BLOB,
 ];
 
 function encrypt(data: Buffer, options: EncryptOptions) {
@@ -91,7 +92,6 @@ function convertAnyToBuffer(data: any) {
     } else if (typeof data === 'number') {
         return Buffer.from(data.toString());
     } else if (typeof data === 'object') {
-        const stringify = require('fast-safe-stringify');
         return Buffer.from(stringify(data));
     } else {
         throw new Error('Invalid data type');
@@ -172,63 +172,93 @@ function convertBufferToType(data: Buffer | null | undefined, ltype: DataTypeCla
     }
 }
 
+const toJSONFn = function(this: any) {
+    const obj = this.get();
+    const keys = Object.keys(obj);
+    keys.forEach((key) => {
+        if (key.startsWith(defaultAttributePrefix)) {
+            delete obj[key];
+        }
+    });
+
+    return obj;
+}
+
+function beforeSaveCallback(attributeName: string, propertyKey: string, options: EncryptAttributeOptions, obj: any) {
+    let value = null;
+    if (obj[propertyKey]) value = encrypt(convertAnyToBuffer(obj[propertyKey]), options);
+    obj.setDataValue(attributeName, value);
+}
+
+function afterFindCallback(attributeName: string, propertyKey: string, options: EncryptAttributeOptions, type: DataTypeClassOrInstance, obj: Model | Model[] | null) {
+    if (obj === null) return;
+
+    let value = null;
+
+    if (Array.isArray(obj)) {
+        obj.forEach((element) => {
+            afterFindCallback(attributeName, propertyKey, options, type, element);
+        });
+    } else {
+        value = obj.getDataValue(attributeName);
+        if (value) {
+            const decryptedValue = decrypt(value, options);
+            value = convertBufferToType(decryptedValue, type);
+        }
+        obj.setDataValue(propertyKey, value);
+        obj.changed(propertyKey, false);
+    }
+}
+
+function beforeFindCallback(attributeName: string, propertyKey: string, options: EncryptAttributeOptions, opts: any) {
+    if (opts.where && opts.where[propertyKey]) {
+        // find by encrypted value
+        opts.where[attributeName] = encrypt(convertAnyToBuffer(opts.where[propertyKey]), options);
+        // remove the original attribute from the where clause
+        delete opts.where[propertyKey];
+    }
+}
 
 /**
  * Decorator to encrypt an attribute in the model.
  * @description The attribute will be stored in the database as a BLOB and will be encrypted using the provided key and iv.
+ * Note that find on this attribute will only work in equality conditions. e.g. { where: { attribute: 'value' } }
  * @see {@link supportedTypes} for the list of supported data types.
  * @param type {@link DataTypeClassOrInstance}
  * @param options {@link EncryptAttributeOptions}
  */
 export function EncryptedAttribute(type: DataTypeClassOrInstance, options: EncryptAttributeOptions) {
-    // if (!supportedTypes.includes(type)) throw new Error(`Invalid data type ${type} for @EncryptedAttribute`);
     if (!supportedTypes.some(supportedType => isType(type, supportedType))) throw new Error(`Invalid data type ${type} for @EncryptedAttribute`);
 
     return function (target: any, propertyKey: keyof any) {
+        target.constructor.prototype['toJSON'] = toJSONFn;
+
         function getAttributeName() {
             return options.attributePrefix || defaultAttributePrefix + propertyKey.toString();
         }
 
-        // we need to define a virtual attribute to store the decrypted value
+        /* we need to define a virtual attribute to store the decrypted value ##### */
         Attribute(DataTypes.VIRTUAL)(target, propertyKey as string);
 
         // we need to define a real attribute to store the encrypted value. BLOB long
         Attribute(DataTypes.BLOB(options.encryptedStoreSize || defaultEncryptedStoreSize))(target, getAttributeName());
         AllowNull(target, getAttributeName());
 
-        // hooks callback definition
-        function beforeSaveCallback(obj: any) {
-            let value = null;
-            if (obj[propertyKey]) value = encrypt(convertAnyToBuffer(obj[propertyKey]), options);
-            obj.setDataValue(getAttributeName(), value);
-        }
+        /* ##### hooks callback definition ##### */
+        target.constructor[beforeSaveCallback.name] = beforeSaveCallback.bind(null, getAttributeName(), propertyKey as string, options);
+        target.constructor[afterFindCallback.name] = afterFindCallback.bind(null, getAttributeName(), propertyKey as string, options, type);
+        target.constructor[beforeFindCallback.name] = beforeFindCallback.bind(null, getAttributeName(), propertyKey as string, options);
 
-        function afterFindCallback(obj: Model | Model[] | null) {
-            if (obj === null) return;
 
-            let value = null;
+        /* ##### hooks registration to the model ##### */
 
-            if (Array.isArray(obj)) {
-                obj.forEach((element) => {
-                    afterFindCallback(element);
-                });
-            } else {
-                value = obj.getDataValue(getAttributeName());
-                if (value) {
-                    const decryptedValue = decrypt(value, options);
-                    value = convertBufferToType(decryptedValue, type);
-                }
-                obj.setDataValue(propertyKey, value);
-                obj.changed(propertyKey, false);
-            }
-        }
-
-        // hooks registration to the model
-        target.constructor[beforeSaveCallback.name] = beforeSaveCallback;
-        target.constructor[afterFindCallback.name] = afterFindCallback;
-
-        // hooks registration to the model
+        // to encrypt the attribute before saving
         BeforeSave(target.constructor, beforeSaveCallback.name);
+
+        // to decrypt the attribute after finding
         AfterFind(target.constructor, afterFindCallback.name);
+
+        // to encrypt the attribute before finding
+        BeforeFindAfterOptions(target.constructor, beforeFindCallback.name);
     }
 }
