@@ -6,7 +6,7 @@ services:
     depends_on:
       - mariadb
     ports:
-      - "3500:3500"
+      - "${PORT}:${PORT}"
     volumes:
       - ./vol/config:/app/config
     environment:
