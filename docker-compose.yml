@@ -18,6 +18,12 @@ services:
       - ENCRYPT_SALT_ROUNDS=${ENCRYPT_SALT_ROUNDS}
       - DB_ENCRYPT_ATTR_IV=${DB_ENCRYPT_ATTR_IV}
       - DB_ENCRYPT_ATTR_KEY=${DB_ENCRYPT_ATTR_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT}/health"]
+      interval: 20s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     networks:
       - mynetwork
 
@@ -25,12 +31,16 @@ services:
     image: mariadb:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
     networks:
       - mynetwork
+    healthcheck:
+        test: "mariadb --host=database --user=${MARIADB_USER} --password=${MARIADB_PASSWORD} -e 'SELECT 1;'"
+        interval: 1s
+        retries: 120
     volumes:
       - ./vol/data:/var/lib/mysql
 
