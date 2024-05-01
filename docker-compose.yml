@@ -9,16 +9,30 @@ services:
       - "3500:3500"
     volumes:
       - ./vol/config:/app/config
+    environment:
+      - PORT=${PORT}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - API_SESSION_SECRET=${API_SESSION_SECRET}
+      - NODE_ENV=${NODE_ENV}
+      - RUN_JOBS=${RUN_JOBS}
+      - ENCRYPT_SALT_ROUNDS=${ENCRYPT_SALT_ROUNDS}
+      - DB_ENCRYPT_ATTR_IV=${DB_ENCRYPT_ATTR_IV}
+      - DB_ENCRYPT_ATTR_KEY=${DB_ENCRYPT_ATTR_KEY}
     networks:
-      - net
+      - mynetwork
 
   mariadb:
     image: mariadb:latest
     restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
-      - net
+      - mynetwork
     volumes:
       - ./vol/data:/var/lib/mysql
 
 networks:
-  net:
+  mynetwork:
