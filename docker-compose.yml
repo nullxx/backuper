@@ -16,6 +16,8 @@ services:
       - NODE_ENV=development
       - RUN_JOBS=true
       - ENCRYPT_SALT_ROUNDS=10
+      - DB_ENCRYPT_ATTR_IV=
+      - DB_ENCRYPT_ATTR_KEY=
     networks:
       - mynetwork
 
