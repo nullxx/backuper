@@ -32,13 +32,13 @@ services:
     restart: always
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: "yes"
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - mynetwork
     healthcheck:
-        test: "mariadb --user=${MARIADB_USER} --password=${MARIADB_PASSWORD} -e 'SELECT 1;'"
+        test: "mariadb --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} -e 'SELECT 1;'"
         interval: 1s
         retries: 120
     volumes:
