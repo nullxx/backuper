@@ -27,6 +27,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.get('/health', (_req, res) => res.send('OK'));
+
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
