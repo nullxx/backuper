@@ -31,6 +31,11 @@
     {{backups.length}} backups found
   </p>
 
+  <details open>
+    <summary>Sizes chart</summary>
+    <canvas id="sizes-chart" width="400" height="80"></canvas>
+  </details>
+
   <div class="relative w-full overflow-auto">
     <table class="w-full caption-bottom text-sm">
       <thead class="[&amp;_tr]:border-b">
@@ -177,6 +182,7 @@
   </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   const backups = {{{ json backups }}};
@@ -226,6 +232,30 @@
 
     window.open(backup.publicUrl, '_blank');
   }
+
+  // sizes chart
+  var sizesChart = new Chart(document.getElementById('sizes-chart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: backups.map(b => b.doneAt),
+      datasets: [{
+        label: 'Backup sizes',
+        data: backups.map(b => b.size),
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
 </script>
 
 
