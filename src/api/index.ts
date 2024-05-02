@@ -60,11 +60,11 @@ app.use(lusca.referrerPolicy("same-origin"));
 
 app.use(rouco);
 
-app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((error: Error, req: Request, res: Response, _next: NextFunction) => {
   logger.error(error);
 
   let newError = new Error("An error ocurred. Please check the logs");
-  if (error instanceof APIError && (error as APIError).isExposable()) { // to prevent leaking sensitive information. APIError are manually thrown wihout internal information
+  if ((error instanceof APIError && (error as APIError).isExposable()) || req.session.user) { // to prevent leaking sensitive information. APIError are manually thrown wihout internal information
     newError = error;
   } else {
     newError.stack = '';
