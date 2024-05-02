@@ -30,8 +30,6 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
-    networks:
-      - mynetwork
 
   mariadb:
     image: mariadb:latest
@@ -41,8 +39,7 @@ services:
       - MYSQL_DATABASE=backuper
       - MYSQL_USER=backuper
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-notexposablesoweackpassword}
-    networks:
-      - mynetwork
+
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       interval: 20s
@@ -52,5 +49,3 @@ services:
     volumes:
       - ./vol/data:/var/lib/mysql
 
-networks:
-  mynetwork:
