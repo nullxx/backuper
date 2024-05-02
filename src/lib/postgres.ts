@@ -21,7 +21,7 @@ export async function doPostgreSQLBackupToFile({
     const connectionOpts = parseDbUri(uri);
 
     const cmd = [
-        `PGPASSWORD="${connectionOpts.password}"`,
+        `PGPASSWORD='${connectionOpts.password}'`,
         `pg_dump --clean -h ${connectionOpts.host} -p ${connectionOpts.port} -U ${connectionOpts.user
         } -F ${compressFile ? "t" : "p"} ${connectionOpts.database} > ${path}`,
     ].join(" ");

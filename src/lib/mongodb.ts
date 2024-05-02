@@ -16,7 +16,7 @@ export async function doMongoBackupToFile({
     path = path.concat(".gz");
   }
 
-  const cmd = `mongodump --uri "${uri}" --gzip --archive=${path}`;
+  const cmd = `mongodump --uri '${uri}' --gzip --archive=${path}`;
 
   const exitCode = await execute(cmd);
 
