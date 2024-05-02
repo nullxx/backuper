@@ -100,7 +100,7 @@ function convertAnyToBuffer(data: any) {
 
 function isType(type1: DataTypeClassOrInstance, type2: DataTypeClassOrInstance) {
     if (type1 instanceof DataTypes.ABSTRACT) {
-        return true;
+        return type1.constructor.name === (type2 as unknown as any).name;
     } else {
         return type1 === type2;
     }
