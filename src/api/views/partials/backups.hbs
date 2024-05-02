@@ -90,10 +90,14 @@
               </svg>
               <span class="sr-only">Info</span>
               <div>
+                {{#if backup.message}}
                 <span class="message" data-tail="100">{{tail backup.message 100}}</span>
                 {{#if (gt (length backup.message) 100)}}
                 <button onclick="expand(this)" data-message="{{backup.message}}"
                   class="text-blue-600 hover:underline">more</button>
+                {{/if}}
+                {{else}}
+                <span>No error detail</span>
                 {{/if}}
               </div>
             </div>
