@@ -37,7 +37,7 @@ export async function doMySQLBackupToFile({
     connectionOpts.user,
     "-P",
     `${connectionOpts.port}`,
-    "-p" + connectionOpts.password,
+    "-p" + `'${connectionOpts.password}`,
     "--add-drop-table", // add drop table to each table
     connectionOpts.database,
     ">",
