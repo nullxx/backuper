@@ -30,19 +30,46 @@ function goForHooks(database: Sequelize) {
 
 let currentDatabase: Sequelize | null = null;
 
+interface DBConfig {
+  host: string;
+  user: string;
+  password: string;
+  database: string;
+  port: number;
+}
+
 export async function initialize(): Promise<Sequelize> {
+  let dbConfig: DBConfig | null = null;
+
   const fsDbConfig = await readConfig(ConfigType.DB);
-  if (!fsDbConfig?.host || !fsDbConfig?.username || !fsDbConfig?.password || !fsDbConfig?.database || !fsDbConfig?.port) {
-    throw new Error('Missing database configuration');
+  if (fsDbConfig?.host && fsDbConfig?.username && fsDbConfig?.password && fsDbConfig?.database && fsDbConfig?.port) {
+    dbConfig = {
+      host: fsDbConfig.host,
+      user: fsDbConfig.username,
+      password: fsDbConfig.password,
+      database: fsDbConfig.database,
+      port: Number(fsDbConfig.port),
+    };
+  } else if (process.env.MYSQL_HOST && process.env.MYSQL_USER && process.env.MYSQL_PASSWORD && process.env.MYSQL_DATABASE && process.env.MYSQL_PORT) {
+    dbConfig = {
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      port: Number(process.env.MYSQL_PORT),
+    };
+
+    await writeConfig(ConfigType.DB, {
+      host: dbConfig.host,
+      username: dbConfig.user,
+      password: dbConfig.password,
+      database: dbConfig.database,
+      port: dbConfig.port.toString(),
+    });
   }
 
-  const dbConfig = {
-    host: fsDbConfig.host,
-    user: fsDbConfig.username,
-    password: fsDbConfig.password,
-    database: fsDbConfig.database,
-    port: Number(fsDbConfig.port),
-  };
+  if (!dbConfig) throw new Error('Missing database configuration');
+
   const mysqlConnection = await createMySQLConnection({
     host: dbConfig.host,
     user: dbConfig.user,

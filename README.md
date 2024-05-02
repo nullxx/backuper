@@ -11,6 +11,14 @@ See the [docker-compose.yml](./docker-compose.yml) file for better understanding
 ```bash
 docker-compose up --build
 ```
+By default a mariadb server will be started with the following credentials:
+- `MYSQL_HOST=mariadb`
+- `MYSQL_USER=backuper`
+- `MYSQL_PASSWORD=${MYSQL_PASSWORD:-notexposablesoweackpassword}`
+- `MYSQL_DATABASE=backuper`
+- `MYSQL_PORT=3306`
+
+So if you don't explicitly set the `MYSQL_PASSWORD` environment variable, the default password will be used.
 
 ## Demo images
 
