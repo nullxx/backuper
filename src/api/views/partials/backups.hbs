@@ -234,18 +234,22 @@
   }
 
   // sizes chart
-  var sizesChart = new Chart(document.getElementById('sizes-chart').getContext('2d'), {
+  const reorderedBackups = backups.sort((a, b) => new Date(a.doneAt) - new Date(b.doneAt));
+  const sizesChart = new Chart(document.getElementById('sizes-chart').getContext('2d'), {
     type: 'line',
     data: {
-      labels: backups.map(b => b.doneAt),
+      labels: reorderedBackups.map((b, i) => i),
       datasets: [{
         label: 'Backup sizes',
-        data: backups.map(b => b.size),
+        data: reorderedBackups.map(b => b.size),
         borderColor: 'rgb(75, 192, 192)',
         borderWidth: 1
       }]
     },
     options: {
+      maintainAspectRatio: true,
+      aspectRatio: 2,
+      responsive: true,
       scales: {
         yAxes: [{
           ticks: {
@@ -255,6 +259,12 @@
       }
     }
   });
+window.addEventListener('beforeprint', () => {
+  sizesChart.resize(600, 600);
+});
+window.addEventListener('afterprint', () => {
+  sizesChart.resize();
+});
 
 </script>
 
