@@ -13,7 +13,7 @@ RUN npm prune --production
 # production stage
 FROM node:21.7.3-alpine3.18
 WORKDIR /app
-RUN apk update && apk add --no-cache mysql-client postgresql-client mongodb-tools && rm -rf /var/cache/apk/*
+RUN apk update && apk add --no-cache mysql-client mariadb-connector-c postgresql-client mongodb-tools && rm -rf /var/cache/apk/*
 COPY --from=build-stage /app/node_modules node_modules
 COPY --from=build-stage /app/dist dist
 
