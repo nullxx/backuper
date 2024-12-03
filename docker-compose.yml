@@ -32,7 +32,7 @@ services:
       start_period: 30s
 
   mariadb:
-    image: mariadb:latest
+    image: mariadb:11.6.2-noble
     restart: always
     environment:
       - MARIADB_RANDOM_ROOT_PASSWORD="yes"
